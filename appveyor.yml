@@ -1,0 +1,35 @@
+clone_depth: 50
+
+init:
+  - ps: iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - npm cache clear --force
+  - ps: >-
+      if ($env:nodejs_version -eq "4") {
+        npm install npm@latest-5 -g
+      } else {
+        npm install npm@latest -g
+      }
+  - npm --version
+  - npm install -g bats
+  - scoop install shellcheck
+
+build: false
+
+before_test:
+  - ps: rm test/install_command.bats
+  - ps: rm test/plugin_list_all_command.bats
+  - ps: rm test/remove_command.bats
+  - ps: rm test/reshim_command.bats
+  - ps: rm test/uninstall_command.bats
+  - ps: rm test/update_command.bats
+  - ps: rm test/utils.bats
+  - ps: rm test/version_commands.bats
+  - ps: rm test/which_command.bats
+
+test_script:
+  - shellcheck -V
+  - bash lint.sh
+  - bash -c 'bats test'

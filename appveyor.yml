@@ -18,4 +18,5 @@ install:
 build: false
 
 test_script:
+  - which find
   - bash -c 'bats test'
